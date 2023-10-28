@@ -10,5 +10,4 @@ public class ApiGestionDeBudgetApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ApiGestionDeBudgetApplication.class, args);
 	}
-
 }

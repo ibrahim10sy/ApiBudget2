@@ -19,8 +19,7 @@ public class Type {
     @NotNull(message = "Il faut de contenu pour ce champ")
     private String titre;
 
-    @ManyToOne
-    private Utilisateur utilisateur;
+
 
     @OneToMany(mappedBy = "type")
     private List<Depenses> depenses;

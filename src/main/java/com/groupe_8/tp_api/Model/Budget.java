@@ -20,7 +20,6 @@ public class Budget {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idBudget;
-
     @NotBlank(message = "La description de la depense ne doit pas être null ou vide")
     @Column(nullable = false)
     private String description;

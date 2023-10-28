@@ -22,6 +22,7 @@ public class Categorie {
     @NotNull(message = "Il faut de contenu pour ce champ")
     private String titre;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "idUtilisateur")
     private Utilisateur utilisateur;

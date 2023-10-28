@@ -4,6 +4,7 @@ import com.groupe_8.tp_api.Model.Categorie;
 import com.groupe_8.tp_api.Service.CategorieService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +27,16 @@ public class CategorieController {
     public List<Categorie> lire(){
         return categorieService.lire();
     }
+   /* @GetMapping("/list/{idUser}")
+    @Operation(summary = "affichage des categories à travers l'id de utilisateur")
+    public ResponseEntity<List<Categorie>> listeCategorieByUseur(@PathVariable long id){
+        return  new ResponseEntity<>(categorieService.getAllCatUser(id), HttpStatus.OK);
+    }*/
+    @GetMapping("/list/{idUser}")
+    @Operation(summary = "affichage des categories à travers l'id de utilisateur")
+    public ResponseEntity<List<Categorie>> listeCategorieByUseur(@PathVariable long idUser){
+        return  new ResponseEntity<>(categorieService.getAllCatUser(idUser), HttpStatus.OK);
+    }
 
     @PutMapping("/modifier")
     @Operation(summary = "Modification d'un categorie")
@@ -40,10 +51,9 @@ public class CategorieController {
         }
        // return categorieModifiee+" a été remplacée par l'ancienne";
     }
-    @DeleteMapping("/Supprimer")
+    @DeleteMapping("/Supprimer/{idCategorie}")
     @Operation(summary = "suppression  d'un categorie")
-      public String supprimer(@RequestParam("id") long idCategorie){
-       categorieService.supprimer(idCategorie);
-       return "Vous avez supprimé la categorie à l'id "+idCategorie;
+      public String supprimer(@PathVariable long idCategorie){
+       return categorieService.supprimer(idCategorie);
       }
 }

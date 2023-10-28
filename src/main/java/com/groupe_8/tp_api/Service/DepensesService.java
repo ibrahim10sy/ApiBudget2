@@ -53,7 +53,11 @@ public class DepensesService {
         if(dateDepenses.isBefore(budget.getDateDebut()) || dateDepenses.isAfter(LocalDate.now()))
             throw new BadRequestException("Entrez une date correcte");
 
-        switch (type.getTitre()){
+        if(depenses.getBudget().getMontant() < depenses.getMontant()){
+            throw new BadRequestException("Le montant du dépense ne peut pas être supérieur à celle du budget");
+        }
+
+       /* switch (type.getTitre()){
             case "quotidien" :
                 depensesVerif = depensesRepository.findByUtilisateurAndBudgetAndTypeAndDescriptionAndDate(user,budget,type,depenses.getDescription(),dateDepenses);
                 if (depensesVerif != null)
@@ -85,14 +89,15 @@ public class DepensesService {
             default:
                 throw  new BadRequestException("Ce type de depense n'existe pas");
 
-        }
-        if (budget.getDepenses().isEmpty()){
-            Budget lastBudget = budget.getParent();
-            if (lastBudget != null){
-                Transfert transfert = transfertRepository.findByBudget(lastBudget);
-                if (transfert == null){
-                    if (lastBudget.getMontantRestant() > 0)
-                        budgetService.transfertBudget(budget,lastBudget);
+        }*/ {
+            if (budget.getDepenses().isEmpty()){
+                Budget lastBudget = budget.getParent();
+                if (lastBudget != null){
+                    Transfert transfert = transfertRepository.findByBudget(lastBudget);
+                    if (transfert == null){
+                        if (lastBudget.getMontantRestant() > 0)
+                            budgetService.transfertBudget(budget,lastBudget);
+                    }
                 }
             }
         }
@@ -105,6 +110,22 @@ public class DepensesService {
         return depensesList;
 
     }
+    public List<Depenses> lireParUser(long idUtilisateur){
+        List<Depenses> depensesList = depensesRepository.findByUtilisateurIdUtilisateur(idUtilisateur);
+        if (depensesList.isEmpty())
+            throw new EntityNotFoundException("Aucune depenses trouvée");
+        return depensesList;
+
+    }
+
+    public List<Depenses> lireParBudget(long idBudget){
+        List<Depenses> depensesList = depensesRepository.findByBudgetIdBudget(idBudget);
+        if (depensesList.isEmpty())
+            throw new EntityNotFoundException("Aucune depenses trouvée");
+        return depensesList;
+
+    }
+
     public Depenses getDepenseById(long idDepenses){
         Depenses depenses=depensesRepository.findByIdDepenses(idDepenses);
         if (depenses == null)
@@ -112,13 +133,13 @@ public class DepensesService {
         return depenses;
     }
     public Depenses modifier(Depenses depenses){
-         Depenses depensesVerif = depensesRepository.findByIdDepenses(depenses.getIdDepenses());
-         if (depensesVerif == null)
-             throw  new EntityNotFoundException("cette depenses n'existe pas");
-         if(depensesVerif.getBudget().getDateFin().isBefore(LocalDate.now()))
-             throw new BadRequestException("Vous ne pouvez pas modifier ce depense car son budget est expiré");
-         if (!depensesVerif.getDate().equals(depenses.getDate()))
-             throw new BadRequestException("Vous ne pouvez pas changer la date lors de la modification");
+        Depenses depensesVerif = depensesRepository.findByIdDepenses(depenses.getIdDepenses());
+        if (depensesVerif == null)
+            throw  new EntityNotFoundException("cette depenses n'existe pas");
+        if(depensesVerif.getBudget().getDateFin().isBefore(LocalDate.now()))
+            throw new BadRequestException("Vous ne pouvez pas modifier ce depense car son budget est expiré");
+        if (!depensesVerif.getDate().equals(depenses.getDate()))
+            throw new BadRequestException("Vous ne pouvez pas changer la date lors de la modification");
         if (depenses.getMontant() != depensesVerif.getMontant())
             budgetService.updateMontantRestant(depenses,depensesVerif);
 
