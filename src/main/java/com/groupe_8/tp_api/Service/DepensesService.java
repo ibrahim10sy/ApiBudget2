@@ -30,7 +30,42 @@ public class DepensesService {
     @Autowired
     private TransfertRepository transfertRepository;
 
-    public Depenses creer(Depenses depenses){
+
+    public Depenses creer(Depenses depenses) {
+        LocalDate dateDepenses = depenses.getDate();
+        Budget budget = budgetRepository.findByIdBudgetAndUtilisateur(depenses.getBudget().getIdBudget(), depenses.getUtilisateur());
+
+        // ... Vérifications existantes ...
+
+        // Vérifier si le montant de la dépense ne dépasse pas le montant restant du budget
+        if (budget.getMontantRestant() < depenses.getMontant()) {
+            throw new BadRequestException("Le montant de la dépense ne peut pas être supérieur à celui du budget restant");
+        }
+
+        // Mettre à jour le montant restant du budget
+        budget.setMontantRestant(budget.getMontantRestant() - depenses.getMontant());
+        budgetRepository.save(budget);
+
+
+
+        // Vérifier et gérer les transferts si nécessaire
+        if (budget.getDepenses().isEmpty()) {
+            Budget lastBudget = budget.getParent();
+            if (lastBudget != null) {
+                Transfert transfert = transfertRepository.findByBudget(lastBudget);
+                if (transfert == null) {
+                    if (lastBudget.getMontantRestant() > 0) {
+                        budgetService.transfertBudget(budget, lastBudget);
+                    }
+                }
+            }
+        }
+
+        // Enregistrer la dépense mise à jour
+        return depensesRepository.save(depenses);
+    }
+
+   /* public Depenses creer(Depenses depenses){
         LocalDate dateDepenses = depenses.getDate();
         Budget budget = budgetRepository.findByIdBudgetAndUtilisateur(depenses.getBudget().getIdBudget(), depenses.getUtilisateur());
         if (budget == null)
@@ -55,17 +90,23 @@ public class DepensesService {
 
         if(depenses.getBudget().getMontant() < depenses.getMontant()){
             throw new BadRequestException("Le montant du dépense ne peut pas être supérieur à celle du budget");
+        }else if(depenses.getBudget().getMontant() > depenses.getMontant()) {
+            budgetService.updateMontantRestant(depenses);
+        } else if (depenses.getBudget().getMontant() == 0) {
+            throw new BadRequestException("Impossible d'effectue une dépense");
+        } else {
+            throw new BadRequestException("Vous ne pouvez plus effectue une dépense");
         }
 
-       /* switch (type.getTitre()){
-            case "quotidien" :
+       switch (type.getTitre()){
+            case "quotidienne" :
                 depensesVerif = depensesRepository.findByUtilisateurAndBudgetAndTypeAndDescriptionAndDate(user,budget,type,depenses.getDescription(),dateDepenses);
                 if (depensesVerif != null)
                     throw  new BadRequestException("Desole vous avez deja effectué votre depenses journalière de " +depenses.getDescription());
 
                 budgetService.updateMontantRestant(depenses);
                 break;
-            case  "hebdomadaire" :
+            case  "hebdomendaire" :
                 depensesVerif = depensesRepository.findFirstByUtilisateurAndBudgetAndTypeAndDescriptionOrderByDateDesc(user,
                         budget,type,depenses.getDescription());
                 if (depensesVerif != null){
@@ -89,7 +130,8 @@ public class DepensesService {
             default:
                 throw  new BadRequestException("Ce type de depense n'existe pas");
 
-        }*/ {
+        }
+
             if (budget.getDepenses().isEmpty()){
                 Budget lastBudget = budget.getParent();
                 if (lastBudget != null){
@@ -100,9 +142,10 @@ public class DepensesService {
                     }
                 }
             }
-        }
+
+
         return depensesRepository.save(depenses);
-    }
+    }*/
     public List<Depenses> lire(){
         List<Depenses> depensesList = depensesRepository.findAll();
         if (depensesList.isEmpty())
