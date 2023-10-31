@@ -17,6 +17,5 @@ public class ProcedureStockes {
     private String categoryTitle;
     private Long categoryId;
     private Long expenseId;
-    private Long typeId;
     private Long userId;
 }
