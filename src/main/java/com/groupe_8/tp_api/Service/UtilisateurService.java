@@ -49,15 +49,20 @@ public class UtilisateurService  {
                         Path rootlocation = Paths.get(location);
                         if(!Files.exists(rootlocation)){
                             Files.createDirectories(rootlocation);
-                            Files.copy(multipartFile.getInputStream(),rootlocation.resolve(multipartFile.getOriginalFilename()));
-                            utilisateur.setPhotos("http://10.0.2.2/musaka/"+multipartFile.getOriginalFilename());
+                            Files.copy(multipartFile.getInputStream(),
+                            rootlocation.resolve(multipartFile.getOriginalFilename()));
+                            utilisateur.setPhotos("http://10.0.2.2/musaka/"
+                            +multipartFile.getOriginalFilename());
                         }else{
                             try{
                                 String nom = location+"\\"+multipartFile.getOriginalFilename();
                                 Path name = Paths.get(nom);
                                 if(!Files.exists(name)){
-                                    Files.copy(multipartFile.getInputStream(),rootlocation.resolve(multipartFile.getOriginalFilename()));
-                                    utilisateur.setPhotos("http://10.0.2.2/musaka/"+multipartFile.getOriginalFilename());
+                                    Files.copy(multipartFile.getInputStream(),
+                                    rootlocation.resolve(multipartFile.getOriginalFilename()));
+
+                                    utilisateur.setPhotos("http://10.0.2.2/musaka/"
+                                    +multipartFile.getOriginalFilename());
                                 }else{
                                     Files.delete(name);
                                     Files.copy(multipartFile.getInputStream(),rootlocation.resolve(multipartFile.getOriginalFilename()));
@@ -74,7 +79,9 @@ public class UtilisateurService  {
 
             return utilisateurRepository.save(utilisateur);
         } else {
-            throw new EntityExistsException("Cet email existe déjà");}}
+            throw new EntityExistsException("Cet email existe déjà");
+        }
+    }
 //La fin du methode ajouter
 
 
