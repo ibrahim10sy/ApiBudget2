@@ -75,10 +75,6 @@ public class BudgetService {
         }
 
         //=============================================================================================================
-        /* VÃ©rification si la date le mois et l'annÃ©e du date de debut du budget Ã  inserer est diffÃ©rent du mois et de l'annÃ©e de la date actuelle,
-         alors le systÃ¨me lÃ¨vera une exception */
-        /*if ((dateDebut.getMonthValue() != toDay.getMonthValue()) || (dateDebut.getYear() != toDay.getYear()))
-            throw new BadRequestException("DÃ©solÃ© veuillez choisir une date correct ");*/
 
         //if(budget.getMontantAlerte() >= budget.getMontant())
             //throw  new BadRequestException(("DesolÃ© votre montant d'alerte ne peut pas depassÃ© le montant de votre budget"));
